@@ -77,6 +77,17 @@ bureau_git_prompt () {
   echo $_result
 }
 
+k8s_prompt () {
+  _context=`oc config current-context 2> /dev/null`
+  if [[ $? -ne 0 ]]; then
+    echo "NOT CONNECTED"
+  elif [[ ${_context} =~ ^.*console-digital.*$ ]] ; then
+    echo "%{$FX[blink]%}%{$fg_bold[red]%}${_context} %{$reset_color%}%{$FX[reset]%}"
+  else
+    echo "%{$fg_bold[green]%}${_context} %{$reset_color%}"
+  fi
+}
+
 
 _PATH="%{$fg_bold[white]%}%~%{$reset_color%}"
 
@@ -117,7 +128,7 @@ bureau_precmd () {
 
 setopt prompt_subst
 PROMPT='> $_LIBERTY '
-RPROMPT='$(nvm_prompt_info) $(bureau_git_prompt)'
+RPROMPT='$(nvm_prompt_info) $(k8s_prompt) $(bureau_git_prompt)'
 
 autoload -U add-zsh-hook
 add-zsh-hook precmd bureau_precmd
